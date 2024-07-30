@@ -1,28 +1,35 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ToDoDatabase{
-  //reference hive box
-  final _myBox = Hive.box("MyBox");
+class FirestoreServices{
 
-  List todoList = [];
+  // get the collection of notes
+  final CollectionReference notes = FirebaseFirestore.instance.collection('notes');
 
-  void createDefaultlist(){
-    todoList = [
-      ["Make App", false],
-      ["Do Exercise", false],
-    ];
+  // Create
+  Future<void> addNotes(String note){
+    return notes.add({
+      'note' : note,
+      'timestamp' : Timestamp.now(),
+      'checkVal' : false,
+    });
   }
 
-  //load data
-  void loadData(){
-    todoList = _myBox.get("TODOLIST");
+  // Read
+  Stream<QuerySnapshot> getNotesStream(){
+    final notesList = notes.orderBy('timestamp',descending: true).snapshots();
+    return notesList;
   }
 
-  //update data
-  void updateData(){
-    _myBox.put("TODOLIST", todoList);
+  // Update
+  Future<void> updateNotes(String newNote, String docId){
+    return notes.doc(docId).update({
+      'note' : newNote,
+      'timestamp' : Timestamp.now(),
+    });
   }
 
+  // Delete
+  Future<void> deleteNotes(String docId){
+    return notes.doc(docId).delete();
+  }
 }
-
-

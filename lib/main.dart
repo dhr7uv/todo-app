@@ -1,16 +1,16 @@
 import'package:flutter/material.dart';
 import'home.dart';
-import'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main()async{
 
-  //initiate Hive
-  await Hive.initFlutter();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  //create a box
-  var box = await Hive.openBox("myBox");
-
-  runApp(ToDo());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const ToDo());
 }
 
 class ToDo extends StatefulWidget {
@@ -24,7 +24,7 @@ class _ToDoState extends State<ToDo> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: HomePage(),
     );
   }
